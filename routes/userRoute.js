@@ -3,6 +3,8 @@ const router = express.Router();
 const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const authMiddleware = require("../middleware/authMiddleware");
+const { request } = require("express");
 
 router.post("/register", async (req, res) => {
   try {
@@ -84,6 +86,37 @@ router.post("/login", async (req, res) => {
     res
       .status(500)
       .send({ message: "Error logging in", success: false, error });
+  }
+});
+
+// This will return a users name and email once they are logged in.
+// A logged in user only has a token as stored information, so this token needs to be used to request further information about the user from the database.
+// This is the first protected route in this project, so will have differences to the two routes above.
+// This will call authMiddleware to verify the user token before proceeding
+router.post("/get-user-info-by-id", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.body.userId });
+
+    // If matching user ID not found, return error message and don't execute further logic
+    if (!user) {
+      return res
+        .status(200)
+        .send({ message: "User does not exist", success: false });
+    } else {
+      // Otherwise, return user's name and email
+      res.status(200).send({
+        success: true,
+        data: {
+          name: user.name,
+          email: user.email,
+        },
+      });
+    }
+  } catch (error) {
+    // On error, return error message and details
+    res
+      .status(500)
+      .send({ message: "Error getting user info", success, error });
   }
 });
 
