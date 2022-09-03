@@ -90,13 +90,15 @@ router.post("/login", async (req, res) => {
 });
 
 // This will return a users name and email once they are logged in.
-// A logged in user only has a token as stored information, so this token needs to be used to request further information about the user from the database.
+// A logged in user only has a token as stored information, so this token needs to be used
+// to request further information about the user from the database.
 // This is the first protected route in this project, so will have differences to the two routes above.
 // This will call authMiddleware to verify the user token before proceeding
 router.post("/get-user-info-by-id", authMiddleware, async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.body.userId });
-
+    // The user object will be passed as data in the response, so the password should be obscured for security
+    user.password = undefined;
     // If matching user ID not found, return error message and don't execute further logic
     if (!user) {
       return res
@@ -106,10 +108,7 @@ router.post("/get-user-info-by-id", authMiddleware, async (req, res) => {
       // Otherwise, return user's name and email
       res.status(200).send({
         success: true,
-        data: {
-          name: user.name,
-          email: user.email,
-        },
+        data: user,
       });
     }
   } catch (error) {
