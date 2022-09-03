@@ -6,6 +6,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
+    // Authentication details
     email: {
       type: String,
       required: true,
@@ -13,6 +15,26 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+    },
+
+    // Role details: default set to false so app 'assumes' basic user role
+    isDoctor: {
+      type: Boolean,
+      default: false,
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+
+    // Notification details
+    seenNotifications: {
+      type: Array,
+      default: [],
+    },
+    unseenNotifications: {
+      type: Array,
+      default: [],
     },
   },
   {
