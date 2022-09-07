@@ -14,17 +14,13 @@ const doctorSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    email: {
-      type: String,
-      required: true,
-    },
     phoneNumber: {
       type: String,
       required: true,
     },
     website: {
       type: String,
-      required: true,
+      required: false,
     },
     address: {
       type: String,
